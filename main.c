@@ -53,7 +53,7 @@ char define_sprite_cmd[4 + sizeof(trex_data)];
  *    SP2: Y coordinate (in pixels)
  *    SP3: sprite index
  */
-char draw_sprite_cmd[] = "\x23\x01\x20\x01";
+char draw_sprite_cmd[] = "\x23\x02\x20\x01";
 
 extern char run();
 

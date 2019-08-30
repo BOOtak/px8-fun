@@ -87,7 +87,7 @@ subcpu_call:
 
 .draw_cmd
     defb    0x23
-    defb    1
+    defb    2
 .ycoord
     defb    0
     defb    1
