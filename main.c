@@ -56,6 +56,14 @@ char define_sprite_cmd[4 + sizeof(trex_data)];
 char draw_sprite_cmd[] = "\x23\x02\x20\x01";
 
 extern char run();
+extern char adcvrt(char mode) __z88dk_fastcall;
+extern char read_temperature() __z88dk_fastcall;
+
+#define ADCVRT_MODE_AD_CHANNEL_1 0
+#define ADCVRT_MODE_AD_CHANNEL_2 1
+#define ADCVRT_MODE_DIP_SW 2
+#define ADCVRT_MODE_BATTERY 3
+#define ADCVRT_MODE_POWER_SW 4
 
 void asm_benchmark() {
   int ts1 = clock();
@@ -96,10 +104,19 @@ void c_benchmark() {
 }
 
 int main() {
-  clg();
+  // clg();
 
-  c_benchmark();
-  asm_benchmark();
+  unsigned char temp = read_temperature();
+  printf("%x\n", temp);
+
+  // c_benchmark();
+  // asm_benchmark();
+
+  printf("%d\n", adcvrt(ADCVRT_MODE_AD_CHANNEL_1));
+  printf("%d\n", adcvrt(ADCVRT_MODE_AD_CHANNEL_2));
+  printf("%d\n", adcvrt(ADCVRT_MODE_DIP_SW));
+  printf("%d\n", adcvrt(ADCVRT_MODE_BATTERY));
+  printf("%d\n", adcvrt(ADCVRT_MODE_POWER_SW));
 
   int a = 0;
   scanf("%d\n", &a);

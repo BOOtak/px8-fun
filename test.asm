@@ -1,6 +1,11 @@
 PUBLIC  run
 PUBLIC  _run
 
+PUBLIC  adcvrt
+PUBLIC  _adcvrt
+
+PUBLIC  read_temperature
+PUBLIC  _read_temperature
 
 run:
 _run:
@@ -77,6 +82,48 @@ subcpu_call:
     ld      hl,(1) ; WBOOT (BIOS)
     add     hl,de
     jp      (hl)
+
+adcvrt:
+_adcvrt:
+    ld      c,l
+    ld      hl,retaddr
+    push    hl
+    ld      hl,(1)
+    ld      de,0x6F
+    add     hl,de
+    jp      (hl)
+.retaddr
+    ld      l,a
+    ld      h,0
+    ret
+
+read_temperature:
+_read_temperature:
+    ; Disable interrupts
+    di
+    ; Send command to 7508
+    in      a,(005h)    ; Status register, bit 3 carries the control signal for the serial bus to the 7508
+    and     008h
+    jr      z,read_temperature
+    ld      a,1Ch       ; read temperature command
+    out     (006h),a    ; send data to the 7508
+    ld      a,2
+    out     (001h),a    ; reset the control signal
+    ; Receive result from 7508
+.wait_7508
+    in      a,(005h)
+    and     008h
+    jr      z,wait_7508
+    in      a,(006h)    ; receive data from 7508
+    ; Store the result
+    ld      l,a
+    ld      h,0
+    ; Reset the control signal
+    ld      a,2
+    out     (001h),a
+    ; Enable interrupts
+    ei
+    ret
 
 .packet
     defw    spr_cmd
